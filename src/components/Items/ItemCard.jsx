@@ -1,13 +1,19 @@
-function ItemCard({ name, owner, distance, rating, description, type }) {
+function ItemCard({ item }) {
   return (
-    <div>
-      <h3>{name}</h3>
-      <p>{owner} · {distance}</p>
-      <p>⭐ {rating}</p>
-      <p>{description}</p>
-      <button>
-        {type === 'borrow' ? 'Offer to Lend' : 'Request to Borrow'}
-      </button>
+    <div className="item-card">
+      <img
+        src={item.image}
+        alt={item.name}
+      />
+      <div className="item-card-body">
+        <h3>{item.name}</h3>
+        <p className="available">✅ Available</p>
+        <p className="location">📍 {item.location} · {item.owner}</p>
+        <div className="item-card-footer">
+          <span className="price">Ksh {item.price}/day</span>
+          <button className="btn-borrow">Borrow</button>
+        </div>
+      </div>
     </div>
   )
 }

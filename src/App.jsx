@@ -1,45 +1,228 @@
 import { useState } from 'react'
 import Header from './components/Layout/Header'
 import Footer from './components/Layout/Footer'
-import ItemList from './components/Items/ItemList'
+import AddItemForm from './components/Items/AddItemForm'
+import CategoryFilter from './components/shared/CategoryFilter'
+import ContactForm from './components/shared/ContactForm'
 
 function App() {
+  const [activePage, setActivePage] = useState('home')
+  const [showBorrowForm, setShowBorrowForm] = useState(false)
+  const [showLendForm, setShowLendForm] = useState(false)
+  const [myItems, setMyItems] = useState([])
+  const [activeCategory, setActiveCategory] = useState('All')
+  const [selectedItem, setSelectedItem] = useState(null)
+  const [contactType, setContactType] = useState(null)
+
   const [borrowRequests, setBorrowRequests] = useState([
-    { id: 1, name: "Borrowing a Drill for a Day", owner: "Paul", distance: "700m", rating: "4.8", description: "Need a drill for some home repairs." },
-    { id: 2, name: "Looking for a Large Cooking Pot", owner: "Sarah", distance: "500m", rating: "5.5", description: "Need a big pot for a family gathering this weekend." }
+    { id: 1, name: "Borrowing a Drill for a Day", owner: "Paul", distance: "700m", rating: "4.8", description: "Need a drill for some home repairs.", category: "Tools", emoji: "🔧", image: "/drill.jpg" },
+    { id: 2, name: "Looking for a Large Cooking Pot", owner: "Sarah", distance: "500m", rating: "5.5", description: "Need a big pot for a family gathering.", category: "Kitchen", emoji: "🍲", image: "/cookingpots.jpg" },
+    { id: 3, name: "Need a Baby Stroller", owner: "Aisha", distance: "300m", rating: "4.9", description: "Need a stroller for the weekend.", category: "Baby Items", emoji: "🍼", image: "/stroller.jpg" },
+    { id: 4, name: "Looking for Event Seats", owner: "Brian", distance: "1km", rating: "4.7", description: "Need 20 seats for a family event.", category: "Party Gear", emoji: "🪑", image: "/eventseats.jpg" },
   ])
 
   const [availableItems, setAvailableItems] = useState([
-    { id: 1, name: "Tent Available for the Weekend", owner: "James", distance: "300m", rating: "5.6", description: "Camping tent available for the weekend." },
-    { id: 2, name: "Ladder for Short-Term Use", owner: "Anne", distance: "850m", rating: "4.7", description: "Sturdy ladder available to borrow." }
+    { id: 1, name: "Tent for the Weekend", owner: "James", distance: "300m", rating: "5.6", description: "Camping tent available for the weekend.", category: "Adventure", emoji: "⛺", image: "/tents.jpg" },
+    { id: 2, name: "Ladder for Short-Term Use", owner: "Anne", distance: "850m", rating: "4.7", description: "Sturdy ladder available to borrow.", category: "Tools", emoji: "🪜", image: "/ladder.jpg" },
+    { id: 3, name: "Bicycle Available", owner: "Kevin", distance: "600m", rating: "4.5", description: "Mountain bike available for daily hire.", category: "Transport", emoji: "🚲", image: "/bicycle.jpg" },
+    { id: 4, name: "Party Speaker", owner: "Mike", distance: "400m", rating: "4.8", description: "JBL speaker available for events.", category: "Party Gear", emoji: "🔊", image: "/speaker.jpg" },
   ])
 
-  const [showForm, setShowForm] = useState(null) // 'borrow' or 'lend'
+  const filteredBorrow = activeCategory === 'All' ? borrowRequests : borrowRequests.filter(i => i.category === activeCategory)
+  const filteredAvailable = activeCategory === 'All' ? availableItems : availableItems.filter(i => i.category === activeCategory)
+
+  const handleAddBorrow = (formData) => {
+    const emojis = { Tools: "🔧", Kitchen: "🍲", Adventure: "⛺", "Party Gear": "🪑", "Baby Items": "🍼", Transport: "🚲" }
+    const newRequest = {
+      id: Date.now(),
+      name: formData.name,
+      owner: "You",
+      distance: "0m",
+      rating: "5.0",
+      description: formData.description || "Looking to borrow this item.",
+      category: formData.category,
+      emoji: emojis[formData.category] || "📦",
+      image: formData.image || null
+    }
+    setBorrowRequests([...borrowRequests, newRequest])
+    setMyItems([...myItems, { ...newRequest, type: 'borrow' }])
+    setShowBorrowForm(false)
+  }
+
+  const handleAddLend = (formData) => {
+    const emojis = { Tools: "🔧", Kitchen: "🍲", Adventure: "⛺", "Party Gear": "🪑", "Baby Items": "🍼", Transport: "🚲" }
+    const newItem = {
+      id: Date.now(),
+      name: formData.name,
+      owner: "You",
+      distance: "0m",
+      rating: "5.0",
+      description: formData.description || "Available to borrow.",
+      category: formData.category,
+      emoji: emojis[formData.category] || "📦",
+      price: formData.price || 0,
+      image: formData.image || null
+    }
+    setAvailableItems([...availableItems, newItem])
+    setMyItems([...myItems, { ...newItem, type: 'lend' }])
+    setShowLendForm(false)
+  }
 
   return (
-    <div className="app">
-      <Header />
+    <div>
+      <Header activePage={activePage} setActivePage={setActivePage} />
       <main>
-        <div>
-          <button onClick={() => setShowForm('borrow')}>
-            🤲 Need to Borrow
-          </button>
-          <button onClick={() => setShowForm('lend')}>
-            🤝 Have to Lend
-          </button>
-        </div>
 
-        {showForm === 'borrow' && <p>Borrow form coming soon...</p>}
-        {showForm === 'lend' && <p>Lend form coming soon...</p>}
+        {activePage === 'home' && (
+          <>
+            <div className="hero-buttons">
+              <button className="btn-need" onClick={() => setShowBorrowForm(true)}>
+                🤲 Need to Borrow
+              </button>
+              <button className="btn-lend" onClick={() => setShowLendForm(true)}>
+                🤝 Have to Lend
+              </button>
+            </div>
 
-        <section>
-          <h2>I Need to Borrow</h2>
-          <ItemList items={borrowRequests} type="borrow" />
-        </section>
-        <section>
-          <h2>Items Available Nearby</h2>
-          <ItemList items={availableItems} type="lend" />
-        </section>
+            {showBorrowForm && (
+              <AddItemForm
+                title="Request an Item to Borrow"
+                onClose={() => setShowBorrowForm(false)}
+                onAdd={handleAddBorrow}
+              />
+            )}
+            {showLendForm && (
+              <AddItemForm
+                title="Post an Item to Lend"
+                onClose={() => setShowLendForm(false)}
+                onAdd={handleAddLend}
+              />
+            )}
+
+            {selectedItem && (
+              <ContactForm
+                item={selectedItem}
+                type={contactType}
+                onClose={() => { setSelectedItem(null); setContactType(null) }}
+              />
+            )}
+
+            <CategoryFilter
+              activeCategory={activeCategory}
+              setActiveCategory={setActiveCategory}
+            />
+
+            <div className="two-col">
+              <div>
+                <h2>I Need to Borrow</h2>
+                {filteredBorrow.map(item => (
+                  <div key={item.id} className="list-card">
+                    <div className="list-card-image">
+                      {item.image ? (
+                        <img src={item.image} alt={item.name} />
+                      ) : (
+                        <span className="list-card-emoji">{item.emoji}</span>
+                      )}
+                    </div>
+                    <div className="list-card-info">
+                      <h3>{item.name}</h3>
+                      <p className="list-card-meta">{item.owner}, {item.distance} ⭐ {item.rating}</p>
+                      <p className="list-card-desc">{item.description}</p>
+                      <button
+                        className="btn-offer"
+                        onClick={() => { setSelectedItem(item); setContactType('offer') }}
+                      >
+                        Offer to Lend
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div>
+                <h2>Items Available Nearby</h2>
+                {filteredAvailable.map(item => (
+                  <div key={item.id} className="list-card">
+                    <div className="list-card-image">
+                      {item.image ? (
+                        <img src={item.image} alt={item.name} />
+                      ) : (
+                        <span className="list-card-emoji">{item.emoji}</span>
+                      )}
+                    </div>
+                    <div className="list-card-info">
+                      <h3>{item.name}</h3>
+                      <p className="list-card-meta">{item.owner}, {item.distance} ⭐ {item.rating}</p>
+                      <p className="list-card-desc">{item.description}</p>
+                      <button
+                        className="btn-borrow"
+                        onClick={() => { setSelectedItem(item); setContactType('borrow') }}
+                      >
+                        Request to Borrow
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+
+        {activePage === 'myitems' && (
+          <>
+            <h2>My Items</h2>
+            <button className="btn-post" onClick={() => setShowLendForm(true)}>
+              + Post an Item
+            </button>
+            {showLendForm && (
+              <AddItemForm
+                title="Post an Item to Lend"
+                onClose={() => setShowLendForm(false)}
+                onAdd={handleAddLend}
+              />
+            )}
+            {myItems.length === 0 ? (
+              <p style={{ marginTop: '1rem', color: '#888' }}>
+                You haven't posted any items yet!
+              </p>
+            ) : (
+              <div>
+                {myItems.map(item => (
+                  <div key={item.id} className="list-card">
+                    <div className="list-card-image">
+                      {item.image ? (
+                        <img src={item.image} alt={item.name} />
+                      ) : (
+                        <span className="list-card-emoji">{item.emoji}</span>
+                      )}
+                    </div>
+                    <div className="list-card-info">
+                      <h3>{item.name}</h3>
+                      <p className="list-card-meta">{item.category} · {item.type === 'borrow' ? '🔍 Borrow Request' : '✅ Available to Lend'}</p>
+                      <p className="list-card-desc">{item.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        )}
+
+        {activePage === 'profile' && (
+          <div style={{ padding: '2rem 0' }}>
+            <h2>My Profile</h2>
+            <div className="profile-card">
+              <p style={{ fontSize: '3rem', textAlign: 'center' }}>👤</p>
+              <h3 style={{ textAlign: 'center' }}>Maureen Muchoki</h3>
+              <p style={{ textAlign: 'center', color: '#888' }}>📍 Nairobi, Kenya</p>
+              <hr style={{ margin: '1rem 0' }} />
+              <p>⭐ Rating: 4.8</p>
+              <p>📦 Items Listed: {myItems.length}</p>
+              <p>🤝 Successful Borrows: 3</p>
+            </div>
+          </div>
+        )}
+
       </main>
       <Footer />
     </div>

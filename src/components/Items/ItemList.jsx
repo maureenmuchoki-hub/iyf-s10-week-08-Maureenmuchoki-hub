@@ -1,18 +1,10 @@
 import ItemCard from './ItemCard'
 
-function ItemList({ items, type }) {
+function ItemList({ items }) {
   return (
-    <div>
+    <div className="item-grid">
       {items.map(item => (
-        <ItemCard
-          key={item.id}
-          name={item.name}
-          owner={item.owner}
-          distance={item.distance}
-          rating={item.rating}
-          description={item.description}
-          type={type}
-        />
+        <ItemCard key={item.id} item={item} />
       ))}
     </div>
   )
