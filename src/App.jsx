@@ -2,8 +2,10 @@ import { useState } from 'react'
 import Header from './components/Layout/Header'
 import Footer from './components/Layout/Footer'
 import AddItemForm from './components/Items/AddItemForm'
-import CategoryFilter from './components/shared/CategoryFilter'
-import ContactForm from './components/shared/ContactForm'
+import CategoryFilter from './components/Shared/CategoryFilter'
+import ContactForm from './components/Shared/ContactForm'
+import PostCard from './components/PostCard'
+import PostList from './components/PostList'
 
 function App() {
   const [activePage, setActivePage] = useState('home')
@@ -27,6 +29,13 @@ function App() {
     { id: 3, name: "Bicycle Available", owner: "Kevin", distance: "600m", rating: "4.5", description: "Mountain bike available for daily hire.", category: "Transport", emoji: "🚲", image: "/bicycle.jpg" },
     { id: 4, name: "Party Speaker", owner: "Mike", distance: "400m", rating: "4.8", description: "JBL speaker available for events.", category: "Party Gear", emoji: "🔊", image: "/speaker.jpg" },
   ])
+
+  const feedPosts = [
+    { id: 1, emoji: "🔧", title: "John just lent his Drill to Paul!", excerpt: "Home repairs sorted in Kilimani. Great neighbour!", author: "John", date: "Today, 10:00 AM" },
+    { id: 2, emoji: "🍲", title: "Grace lent her Cooking Pot for a wedding!", excerpt: "Big family gathering in Kibera was a success.", author: "Grace", date: "Today, 9:30 AM" },
+    { id: 3, emoji: "🚲", title: "Kevin's Bicycle helped Brian explore Kileleshwa!", excerpt: "Perfect for a morning ride around the estate.", author: "Kevin", date: "Yesterday, 8:00 AM" },
+    { id: 4, emoji: "⛺", title: "James lent his Tent for a Karen camping trip!", excerpt: "Family had an amazing weekend in nature.", author: "James", date: "Yesterday, 7:00 AM" },
+  ]
 
   const filteredBorrow = activeCategory === 'All' ? borrowRequests : borrowRequests.filter(i => i.category === activeCategory)
   const filteredAvailable = activeCategory === 'All' ? availableItems : availableItems.filter(i => i.category === activeCategory)
@@ -164,6 +173,12 @@ function App() {
                   </div>
                 ))}
               </div>
+            </div>
+
+            {/* COMMUNITY FEED */}
+            <div style={{ marginTop: '2rem' }}>
+              <h2>📢 Community Feed</h2>
+              <PostList posts={feedPosts} />
             </div>
           </>
         )}
