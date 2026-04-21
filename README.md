@@ -39,6 +39,7 @@ npm run dev
 
 ## Component Structure
 
+```
 src/
 ├── components/
 │   ├── Items/
@@ -57,6 +58,8 @@ src/
 ├── App.css
 ├── index.css
 └── main.jsx
+```
+
 
 ## Lessons Learned
 - How to break a UI into reusable React components
