@@ -78,6 +78,5 @@ src/
 - **State management** — Understanding where to put state and how to pass it down took practice but clicked once I built the real app
 
 ## Live Demo
-Coming soon — will be deployed on Vercel
 
-
+[View Live Site](https://maureenmuchoki-hub.github.io/iyf-s10-week-08-Maureenmuchoki/src/components/App.jsx.)
