@@ -79,4 +79,4 @@ src/
 
 ## Live Demo
 
-[View Live Site](https://maureenmuchoki-hub.github.io/iyf-s10-week-08-Maureenmuchoki/src/components/App.jsx.)
+[View Live Site](https://iyf-s10-week-08-maureenmuchoki-hub.vercel.app/)
